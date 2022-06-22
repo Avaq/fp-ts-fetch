@@ -8,6 +8,11 @@
     "test": "tsc -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avaq/fetch-ts-node.git"
+  },
+  "homepage": "https://github.com/avaq/fetch-ts-node",
   "files": [
     "dist/",
     "package.json",
