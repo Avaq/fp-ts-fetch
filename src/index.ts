@@ -41,12 +41,16 @@ export const sendJson = (method: string) => (url: string) => (headers: Headers) 
 type Transform<A> = (result: Result) => A;
 type Pattern<T> = Record<number, Transform<T>>;
 
-export const matchStatus = <T>(onMismatch: Transform<T>, pattern: Pattern<T>) => (
-  (result: Result): T => pipe(
+export const matchStatusW = <A, B>(onMismatch: Transform<A>, pattern: Pattern<B>) => (
+  (result: Result) => pipe(
     result[0].status.toString(),
     k => pipe(pattern, R.lookup(k)),
-    O.fold(() => onMismatch(result), transform => transform(result)),
+    O.foldW(() => onMismatch(result), transform => transform(result)),
   )
+);
+
+export const matchStatus = <T>(onMismatch: Transform<T>, pattern: Pattern<T>) => (
+  matchStatusW(onMismatch, pattern)
 );
 
 export const acceptStatus = (code: number) => matchStatus<E.Either<Result, Result>>(
