@@ -1,6 +1,6 @@
 {
   "name": "fetch-ts-node",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Node Fetch wrapper for fp-ts users",
   "main": "dist/index.js",
   "type": "commonjs",
