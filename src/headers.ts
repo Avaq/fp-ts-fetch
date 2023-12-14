@@ -1,8 +1,8 @@
-import {flow, pipe, tupled} from 'fp-ts/lib/function.js'
-import * as O from 'fp-ts/lib/Option.js'
-import * as A from 'fp-ts/lib/Array.js'
-import {tuple as tupleEq, contramap as cmapEq} from 'fp-ts/lib/Eq.js'
-import {Eq as StringEq} from 'fp-ts/lib/string.js'
+import {flow, pipe, tupled} from 'fp-ts/lib/function'
+import * as O from 'fp-ts/lib/Option'
+import * as A from 'fp-ts/lib/Array'
+import {tuple as tupleEq, contramap as cmapEq} from 'fp-ts/lib/Eq'
+import {Eq as StringEq} from 'fp-ts/lib/string'
 
 export type Header = [key: string, value: string];
 

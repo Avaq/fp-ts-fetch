@@ -1,7 +1,7 @@
-import {pipe} from 'fp-ts/lib/function.js'
-import * as TE from 'fp-ts/lib/TaskEither.js'
-import * as E from 'fp-ts/lib/Either.js'
-import {Json} from 'fp-ts/lib/Json.js'
+import {pipe} from 'fp-ts/lib/function'
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as E from 'fp-ts/lib/Either'
+import {Json} from 'fp-ts/lib/Json'
 
 export const blob = TE.tryCatchK((response: Response) => response.blob(), E.toError);
 
