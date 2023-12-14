@@ -64,7 +64,7 @@ export const acceptStatus = (code: number) => matchStatus<E.Either<Result, Resul
   {[code]: E.right}
 );
 
-export type RedirectionStrategy = (result: Result) => Request;
+export type RedirectionStrategy = Transform<Request>;
 
 export const redirectAnyRequest: RedirectionStrategy = ([response, request]) => pipe(
   response.headers,
