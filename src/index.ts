@@ -13,7 +13,7 @@ import * as Res from './response';
 
 export type Result = readonly [Response, Request];
 
-export const request = (request: Request): TE.TaskEither<Error, Result> => pipe(
+export const transfer = (request: Request): TE.TaskEither<Error, Result> => pipe(
   TE.fromIO<Request, Error>(() => request.clone()),
   TE.chain(TE.tryCatchK(fetch, E.toError)),
   TE.map(response => [response, request] as const),
