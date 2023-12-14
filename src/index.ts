@@ -111,8 +111,8 @@ export const aggressiveRedirectionStrategy: RedirectionStrategy = matchStatus(T.
   307: redirectAnyRequest,
 });
 
-export const followRedirectsWith = (strategy: RedirectionStrategy) => (_max: number) => (
-  (_result: Result) => {
+export const followRedirectsWith = (strategy: RedirectionStrategy) => (max: number) => (
+  (result: Result) => {
     const seen: Request[] = [];
     const followUp = (max: number) => (result: Result): TE.TaskEither<Error, Result> => {
       if (max < 1) {
@@ -126,12 +126,12 @@ export const followRedirectsWith = (strategy: RedirectionStrategy) => (_max: num
         }
       }
       return pipe(
-        request(nextRequest),
+        transfer(nextRequest),
         TE.mapLeft (e => new Error ('After redirect: ' + e.message)),
         TE.chain (followUp (max - 1)),
       );
     };
-    return followUp (_max) (_result);
+    return followUp (max) (result);
   }
 );
 
