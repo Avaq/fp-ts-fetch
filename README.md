@@ -187,7 +187,7 @@ You'll typically want to `Tuple.mapFst` over it to get at the Response.
 declare const request = (request: Request) => TaskEither<Error, Result>
 ```
 
-Given a [Request][], returns a [TaskEither] which makes an HTTP request and
+Given a [Request][], returns a [TaskEither][] which makes an HTTP request and
 resolves with the [Result](#result). The TaskEither only rejects if a network
 error was encountered, and always resolves if an HTTP response was
 successfully obtained.
@@ -545,6 +545,7 @@ unexpected cases in, for example, [`matchStatus`](#matchstatus).
 [request body]: https://developer.mozilla.org/docs/Web/API/Request/Request#body
 [request method]: https://developer.mozilla.org/docs/Web/API/Request/Request#method
 
+[TaskEither]: https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html
 [Tuple]: https://gcanti.github.io/fp-ts/modules/Tuple.ts.html
 [Json]: https://gcanti.github.io/fp-ts/modules/Json.ts.html
 [io-ts]: https://gcanti.github.io/io-ts/
