@@ -192,7 +192,7 @@ resolves with the [Result](#result). The TaskEither only rejects if a network
 error was encountered, and always resolves if an HTTP response was
 successfully obtained.
 
-> [!INFO]
+> [!NOTE]
 >
 > See the [simple usage example](#simple-example) for usage.
 
@@ -206,7 +206,7 @@ Constructs a GET [Request][] for a given URL with the given [Headers][].
 Automatically sets the `redirect` option to `manual` for
 [`followRedirects`](#followredirects).
 
-> [!INFO]
+> [!NOTE]
 >
 > See the [simple usage example](#simple-example) for usage.
 
@@ -222,7 +222,7 @@ Constructs a [Request][] using the given [request method][], for a given URL,
 with the given [Headers][], and a given [request body][]. Automatically sets
 the `redirect` option to `manual` for [`followRedirects`](#followredirects).
 
-> [!INFO]
+> [!NOTE]
 >
 > See the [extended usage example](#extended-example) for usage.
 
@@ -260,7 +260,7 @@ The first argument is used to transform any results that didn't match the given
 pattern. The [`error`](#error) function is provided as a convenient value to
 use here for catching unexpected cases.
 
-> [!INFO]
+> [!NOTE]
 >
 > See the [extended usage example](#extended-example) for usage.
 
@@ -475,7 +475,7 @@ after attempting to follow redirects. Thankfully, this will typically happen
 automatically as a result of using [`acceptStatus`](#acceptstatus) or
 [`matchStatus`](#matchstatus).
 
-> [!INFO]
+> [!NOTE]
 >
 > See the [extended usage example](#extended-example) for usage.
 
