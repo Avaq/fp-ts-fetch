@@ -1,4 +1,4 @@
-# Fetch-TS
+# FP-TS Fetch
 
 Fetch wrapper for fp-ts users, adapted from
 [fluture-node](https://github.com/fluture-js/fluture-node/#http) to work with

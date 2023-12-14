@@ -1,5 +1,5 @@
 {
-  "name": "fetch-ts",
+  "name": "fp-ts-fetch",
   "version": "0.0.1",
   "description": "Fetch wrapper for fp-ts users",
   "main": "dist/index.js",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/avaq/fetch-ts.git"
+    "url": "https://github.com/avaq/fp-ts-fetch.git"
   },
-  "homepage": "https://github.com/avaq/fetch-ts",
+  "homepage": "https://github.com/avaq/fp-ts-fetch",
   "files": [
     "dist/",
     "package.json",
