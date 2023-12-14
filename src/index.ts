@@ -1,15 +1,15 @@
-import {pipe, flow, identity, constant} from 'fp-ts/function';
-import * as TE from 'fp-ts/TaskEither';
-import * as E from 'fp-ts/Either';
-import * as R from 'fp-ts/Record';
-import * as O from 'fp-ts/Option';
-import * as T from 'fp-ts/ReadonlyTuple';
-import {Json} from 'fp-ts/Json';
+import {pipe, flow, identity, constant} from 'fp-ts/lib/function.js'
+import * as TE from 'fp-ts/lib/TaskEither.js';
+import * as E from 'fp-ts/lib/Either.js';
+import * as R from 'fp-ts/lib/Record.js';
+import * as O from 'fp-ts/lib/Option.js';
+import * as T from 'fp-ts/lib/ReadonlyTuple.js';
+import {Json} from 'fp-ts/lib/Json.js';
 
-import * as H from './headers';
-import * as U from './url';
-import * as Req from './request';
-import * as Res from './response';
+import * as H from './headers.js';
+import * as U from './url.js';
+import * as Req from './request.js';
+import * as Res from './response.js';
 
 const fetch_ = (options: RequestInit) => (request: Request) => fetch(request, options);
 
@@ -40,12 +40,16 @@ export const sendJson = (method: string) => (url: string) => (headers: Headers) 
 type Transform<A> = (result: Result) => A;
 type Pattern<T> = Record<number, Transform<T>>;
 
-export const matchStatus = <T>(onMismatch: Transform<T>, pattern: Pattern<T>) => (
-  (result: Result): T => pipe(
+export const matchStatusW = <A, B>(onMismatch: Transform<A>, pattern: Pattern<B>) => (
+  (result: Result) => pipe(
     result[0].status.toString(),
     k => pipe(pattern, R.lookup(k)),
-    O.fold(() => onMismatch(result), transform => transform(result)),
+    O.foldW(() => onMismatch(result), transform => transform(result)),
   )
+);
+
+export const matchStatus = <T>(onMismatch: Transform<T>, pattern: Pattern<T>) => (
+  matchStatusW(onMismatch, pattern)
 );
 
 export const acceptStatus = (code: number) => matchStatus<E.Either<Result, Result>>(
@@ -91,7 +95,7 @@ export const defaultRedirectionStrategy: RedirectionStrategy = matchStatus(T.snd
   307: redirectIfGetMethod,
 });
 
-export const aggressiveRedirectionPolicy: RedirectionStrategy = matchStatus(T.snd, {
+export const aggressiveRedirectionStrategy: RedirectionStrategy = matchStatus(T.snd, {
   301: redirectAnyRequest,
   302: redirectAnyRequest,
   303: redirectUsingGetMethod,
@@ -128,6 +132,10 @@ export const followRedirects = followRedirectsWith(defaultRedirectionStrategy);
 
 export const blob = (result: Result) => pipe(result, T.fst, Res.blob);
 
+export const text = (result: Result) => pipe(result, T.fst, Res.text);
+
 export const json = (result: Result) => pipe(result, T.fst, Res.json);
 
 export const buffer = (result: Result) => pipe(result, T.fst, Res.buffer);
+
+export const error = (result: Result) => pipe(result, T.fst, Res.error);

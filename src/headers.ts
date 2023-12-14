@@ -1,39 +1,28 @@
-import {pipe} from 'fp-ts/function';
-import * as O from 'fp-ts/Option';
-import {getEq} from 'fp-ts/Array';
-import {Eq} from 'fp-ts/Eq';
+import {flow, pipe, tupled} from 'fp-ts/lib/function.js'
+import * as O from 'fp-ts/lib/Option.js'
+import * as A from 'fp-ts/lib/Array.js'
+import {tuple as tupleEq, contramap as cmapEq} from 'fp-ts/lib/Eq.js'
+import {Eq as StringEq} from 'fp-ts/lib/string.js'
 
-const stringEntryEq: Eq<[string, string]> = {
-  equals: ([la, lb], [ra, rb]) => la === ra && lb === rb
-};
+export type Header = [key: string, value: string];
 
-const stringEntriesEq = getEq(stringEntryEq);
+export const from = (xs: Record<string, string>) => new Headers(xs);
 
-export const eq: Eq<Headers> = {
-  equals: (a, b) => stringEntriesEq.equals(Array.from(a.entries()), Array.from(b.entries()))
-};
+export const fromArray = (xs: Header[]) => new Headers(xs);
 
-export const filterWithIndex = (pred: (k: string, v: string) => boolean) => (input: Headers) => {
-  const output = new Headers;
-  input.forEach((v, k) => {
-    if (pred(k, v)) {
-      output.set(k, v);
-    }
-  });
-  return output;
-};
+export const toArray = (h: Headers): Header[] => Array.from(h.entries());
 
-export const union = (x: Headers) => (y: Headers) => {
-  const z = new Headers;
-  y.forEach((v, k) => z.set(k, v));
-  x.forEach((v, k) => z.set(k, v));
-  return z;
-};
+export const Eq = pipe(tupleEq(StringEq, StringEq), A.getEq, cmapEq(toArray));
 
-export const lookup = (k: string) => (headers: Headers) => pipe(
-  headers.get(k),
-  O.fromNullable,
+export const filterWithIndex = (pred: (k: string, v: string) => boolean) => (
+  flow(toArray, A.filter(tupled(pred)), fromArray)
 );
+
+const byKey = pipe(StringEq, cmapEq(([k]: Header) => k));
+
+export const union = (x: Headers) => flow(toArray, A.union(byKey)(toArray(x)), fromArray);
+
+export const lookup = (k: string) => (headers: Headers) => pipe(headers.get(k), O.fromNullable);
 
 export const omit = (ks: string[]) => filterWithIndex(k => !ks.includes(k));
 

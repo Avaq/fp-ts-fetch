@@ -2,11 +2,10 @@
   "compilerOptions": {
     "noEmit": true,
     "outDir": "./dist",
-    "target": "es5",
+    "target": "es2016",
     "module": "commonjs",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "esModuleInterop": false,
     "sourceMap": false,
     "declaration": true,
     "strict": true,
