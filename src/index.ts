@@ -11,26 +11,33 @@ import * as U from './url.js';
 import * as Req from './request.js';
 import * as Res from './response.js';
 
-const fetch_ = (options: RequestInit) => (request: Request) => fetch(request, options);
-
 export type Result = readonly [Response, Request];
 
 export const request = (request: Request): TE.TaskEither<Error, Result> => pipe(
   TE.fromIO<Request, Error>(() => request.clone()),
-  TE.chain(TE.tryCatchK(fetch_({redirect: 'manual'}), E.toError)),
+  TE.chain(TE.tryCatchK(fetch, E.toError)),
   TE.map(response => [response, request] as const),
 );
 
 export const retrieve = (url: string) => (headers: Headers) => (
-  new Request(url, {headers})
+  new Request(url, {
+    redirect: 'manual',
+    headers: headers,
+  })
 );
 
 export const send = (method: string) => (url: string) => (headers: Headers) => (body: BodyInit) => (
-  new Request(url, {headers, method, body})
+  new Request(url, {
+    redirect: 'manual',
+    headers: headers,
+    method: method,
+    body: body,
+  })
 );
 
 export const sendJson = (method: string) => (url: string) => (headers: Headers) => (body: Json) => (
   new Request(url, {
+    redirect: 'manual',
     method: method,
     headers: pipe(new Headers({'content-type': 'application/json'}), H.union(headers)),
     body: JSON.stringify(body),
