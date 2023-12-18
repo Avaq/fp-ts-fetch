@@ -47,8 +47,8 @@ export const redirectAnyRequest: RedirectionStrategy = ([response, request]) => 
   O.fold(constant(request), flow(
     E.fromPredicate(U.sameOrigin(request.url), identity),
     E.fold(
-      url => new Request(url, request),
-      url => new Request(url, {...request, headers: H.omitConfidential(request.headers)})
+      url => new Request(url, {...request, headers: H.omitConfidential(request.headers)}),
+      url => new Request(url, request)
     )
   )),
 );
