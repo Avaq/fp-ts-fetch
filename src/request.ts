@@ -1,9 +1,29 @@
 import {Json} from 'fp-ts/Json';
 import {flow, pipe} from 'fp-ts/function';
 import * as H from './headers';
+import * as U from './url';
 
 export const method = (method: string) => (request: Request) => (
   new Request(request, {method})
+);
+
+export const url = (url: URL | string) => (request: Request) => (
+  new Request(url, request)
+);
+
+export const params = (params: URLSearchParams) => (request: Request) => pipe(
+  request,
+  url(pipe(U.unsafeParse(request.url), U.params(params)))
+);
+
+export const param = (key: string, value: string) => (request: Request) => pipe(
+  request,
+  url(pipe(U.unsafeParse(request.url), U.param(key, value)))
+);
+
+export const unsetParam = (key: string) => (request: Request) => pipe(
+  request,
+  url(pipe(U.unsafeParse(request.url), U.unsetParam(key)))
 );
 
 export const headers = (headers: Headers) => (request: Request) => (

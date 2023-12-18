@@ -1,4 +1,4 @@
-import {pipe, flow, identity, constant} from 'fp-ts/lib/function'
+import {pipe, constant, identity} from 'fp-ts/lib/function'
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
 import * as R from 'fp-ts/lib/Record';
@@ -43,12 +43,14 @@ export type RedirectionStrategy = Transform<Request>;
 export const redirectAnyRequest: RedirectionStrategy = ([response, request]) => pipe(
   response.headers,
   H.lookup('location'),
-  O.map(U.merge(request.url)),
-  O.fold(constant(request), flow(
-    E.fromPredicate(U.sameOrigin(request.url), identity),
-    E.fold(
-      url => new Request(url, {...request, headers: H.omitConfidential(request.headers)}),
-      url => new Request(url, request)
+  O.bindTo('location'),
+  O.apS('origin', U.parse(request.url)),
+  O.bind('dest', ({origin, location}) => pipe(origin, U.navigate(location))),
+  O.fold(constant(request), ({origin, dest}) => pipe(
+    request,
+    Req.url(dest),
+    pipe(dest, U.sameOrigin(origin)) ? identity : Req.headers(
+      H.omitConfidential(request.headers)
     )
   )),
 );

@@ -231,6 +231,38 @@ declare const method: (method: string) => (request: Request) => Request
 
 Sets the [request method][] of a request to the given value.
 
+#### `Req.url`
+
+```ts
+declare const url: (url: URL | string) => (request: Request) => Request
+```
+
+Sets the [request URL][] to the given [URL][] or string.
+
+#### `Req.params`
+
+```ts
+declare const params: (params: URLSearchParams) => (request: Request) => Request
+```
+
+Override the [request URL][] parameters with the given [URLSearchParams][].
+
+#### `Req.param`
+
+```ts
+declare const param: (key: string, value: string) => (request: Request) => Request
+```
+
+Set the [request URL][] parameter of the given key to the given value.
+
+#### `Req.unsetParam`
+
+```ts
+declare const unsetParam: (key: string) => (request: Request) => Request
+```
+
+Remove a given search parameter from the [request URL][].
+
 #### `Req.headers`
 
 ```ts
@@ -632,6 +664,7 @@ unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
 
 [Request]: https://developer.mozilla.org/docs/Web/API/Request
 [request options]: https://developer.mozilla.org/docs/Web/API/Request/Request#options
+[request URL]: https://developer.mozilla.org/docs/Web/API/Request/url
 [request body]: https://developer.mozilla.org/docs/Web/API/Request/body
 [request method]: https://developer.mozilla.org/docs/Web/API/Request/method
 [request headers]: https://developer.mozilla.org/docs/Web/API/Request/headers
