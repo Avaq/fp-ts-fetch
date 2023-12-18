@@ -4,7 +4,6 @@ import * as E from 'fp-ts/lib/Either';
 import * as R from 'fp-ts/lib/Record';
 import * as O from 'fp-ts/lib/Option';
 import * as T from 'fp-ts/lib/ReadonlyTuple';
-import {Json} from 'fp-ts/lib/Json';
 
 import * as H from './headers';
 import * as U from './url';
@@ -17,31 +16,6 @@ export const transfer = (request: Request): TE.TaskEither<Error, Result> => pipe
   TE.fromIO<Request, Error>(() => request.clone()),
   TE.chain(TE.tryCatchK(fetch, E.toError)),
   TE.map(response => [response, request] as const),
-);
-
-export const retrieve = (url: string) => (headers: Headers) => (
-  new Request(url, {
-    redirect: 'manual',
-    headers: headers,
-  })
-);
-
-export const send = (method: string) => (url: string) => (headers: Headers) => (body: BodyInit) => (
-  new Request(url, {
-    redirect: 'manual',
-    headers: headers,
-    method: method,
-    body: body,
-  })
-);
-
-export const sendJson = (method: string) => (url: string) => (headers: Headers) => (body: Json) => (
-  new Request(url, {
-    redirect: 'manual',
-    method: method,
-    headers: pipe(new Headers({'content-type': 'application/json'}), H.union(headers)),
-    body: JSON.stringify(body),
-  })
 );
 
 type Transform<A> = (result: Result) => A;
@@ -84,14 +58,13 @@ export const redirectIfGetMethod: RedirectionStrategy = result => (
 );
 
 export const redirectUsingGetMethod: RedirectionStrategy = ([response, request]) => (
-  redirectAnyRequest([response, new Request(request.url, {...request, method: 'GET'})])
+  redirectAnyRequest([response, pipe(request, Req.method('GET'))])
 );
 
 export const retryWithoutCondition: RedirectionStrategy = ([, request]) => (
-  request.method !== 'GET' ? request : new Request(
-    request.url,
-    {...request, headers: H.omitConditional(request.headers)}
-  )
+  request.method !== 'GET'
+    ? request
+    : pipe(request, Req.headers(H.omitConditional(request.headers)))
 );
 
 export const defaultRedirectionStrategy: RedirectionStrategy = matchStatus(T.snd, {

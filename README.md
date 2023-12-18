@@ -41,11 +41,12 @@ to the console instead.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
+import * as Req from 'fp-ts-fetch/request';
 import {identity, pipe} from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 
 const task = pipe(
-  Fetch.retrieve('https://example.com')(new Headers),
+  Req.get('https://example.com'),
   Fetch.transfer,
   TE.chain(Fetch.text),
   TE.match(e => e.message, identity)
@@ -63,10 +64,16 @@ FileSystem to get the README contents, and the GitHub API to render them.
 It features:
 
 - Following redirects in a customized way using
-  [`followRedirectsWith`](#followredirectswith).
+  [`followRedirectsWith`](#fetchfollowredirectswith).
 - Parsing and decoding returned JSON using [io-ts][].
 - Request retrying using [retry-ts][].
-- Special handling of the 401 response code using [`matchStatus`](#matchstatus).
+- Special handling of the 401 response code using
+  [`matchStatus`](#fetchmatchstatus).
+
+> [!CAUTION]
+>
+> This example **only works on Node 20** and up, or other runtimes that
+> impelement the `node:fs/promises` module.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
@@ -85,17 +92,14 @@ import {pipe, identity, flow, constVoid} from 'fp-ts/function';
 // Don't forget to put your own API token here:
 const myGitHubToken = '<YOUR_TOKEN>';
 
-// Fetch.send is curried, so we can create our own functions that correspond to
-// specific request methods, and easily include non-standard methods.
-const post = Fetch.send('POST');
-
-// Supply URL and Headers, leaving only the request body to be provided.
-const markdownReq = post('https://api.github.com/markdown/raw')(Headers.from({
-  'Accept': 'application/vnd.github+json',
-  'Authorization': `Bearer ${myGitHubToken}`,
-  'X-GitHub-Api-Version': '2022-11-28',
-  'Content-Type': 'text/plain',
-}));
+// We can prebuild a Request with some of the common options.
+const markdownReq = pipe(
+  Req.post('https://api.github.com/markdown/raw'),
+  Req.header('Accept', 'application/vnd.github+json'),
+  Req.header('Authorization', `Bearer ${myGitHubToken}`),
+  Req.header('X-GitHub-Api-Version', '2022-11-28'),
+  Req.header('Content-Type', 'text/plain'),
+);
 
 // Specify the shape of an error returned from the GitHub API.
 const GitHubError = t.type({
@@ -132,8 +136,8 @@ const task = pipe(
   // Get the README.md contents
   TE.tryCatch(() => FS.readFile('./README.md'), E.toError),
 
-  // Create a Request
-  TE.map(markdownReq),
+  // Finalize our Request by supplying it with a body
+  TE.map(body => pipe(markdownReq, Req.body(body))),
 
   // Transfer the request
   TE.chain(Fetch.transfer),
@@ -168,7 +172,132 @@ task().then(console.log);
 
 ## API
 
-### `Result`
+### The `Headers` module
+
+TODO
+
+### The `Url` module
+
+TODO
+
+### The `Request` module
+
+Immutable utilities for the [Request][] type.
+
+```ts
+import * as Req from 'fp-ts-fetch/request';
+```
+
+#### `Req.to`
+
+```ts
+declare const to: (url: string | URL) => Request
+```
+
+Construct a [Request][] from a [URL][]. Sets the [redirect mode][]
+to `manual` to favour manual redirection via
+[`Fetch.followRedirects`](#fetchfollowredirects). All other [request options][]
+are left on their default values.
+
+#### `Req.get`
+
+```ts
+declare const get: (url: string | URL) => Request
+```
+
+Alternative to [`Req.to`](#reqto) that sets the [request method][] to `GET`.
+
+#### `Req.put`
+
+```ts
+declare const put: (url: string | URL) => Request
+```
+
+Alternative to [`Req.to`](#reqto) that sets the [request method][] to `PUT`.
+
+#### `Req.post`
+
+```ts
+declare const post: (url: string | URL) => Request
+```
+
+Alternative to [`Req.to`](#reqto) that sets the [request method][] to `POST`.
+
+#### `Req.method`
+
+```ts
+declare const method: (method: string) => (request: Request) => Request
+```
+
+Sets the [request method][] of a request to the given value.
+
+#### `Req.header`
+
+```ts
+declare const header: (name: string, value: string) => (request: Request) => Request
+```
+
+Sets one of the [request headers][] of a request to the given value.
+
+#### `Req.append`
+
+```ts
+declare const append: (name: string, value: string) => (request: Request) => Request
+```
+
+Appends a second value to one of the [request headers][] of a request.
+
+#### `Req.unset`
+
+```ts
+declare const unset: (name: string) => (request: Request) => Request
+```
+
+Removes one of the [request headers][] from a request.
+
+#### `Req.body`
+
+```ts
+declare const body: (body: BodyInit) => (request: Request) => Request
+```
+
+Sets the [request body][] of a given request using the given "request body
+initializer". This can be a [Blob][], an [ArrayBuffer][], a [TypedArray][], a
+[DataView][], a [FormData][], a [URLSearchParams][], a string, or a
+[ReadableStream][] object.
+
+#### `Req.json`
+
+```ts
+declare const json: (json: Json) => (request: Request) => Request
+```
+
+Sets the [request body][] of a request to the stringified result of the given
+[Json][] value. Also updates the [request headers][] to include a `Content-Type`
+with value `application/json`.
+
+#### `Req.equivalent`
+
+```ts
+delcare const equivalent: (left: Request) => (right: Request) => boolean
+```
+
+Returns `true` if two given [Request][]s are equivalent. Two requests are
+considered equivalent if all properties except for the body are the same.
+
+### The `Response` module
+
+TODO
+
+### The `Fetch` module
+
+Functional alternative to the [Fetch API][].
+
+```ts
+import * as Fetch from 'fp-ts-fetch';
+```
+
+#### `Fetch.Result`
 
 ```ts
 declare type Result = readonly [Response, Request];
@@ -181,14 +310,14 @@ Having these paired allows for things like retries and following redirects.
 
 You'll typically want to `Tuple.mapFst` over it to get at the Response.
 
-### `request`
+#### `Fetch.request`
 
 ```ts
 declare const request = (request: Request) => TaskEither<Error, Result>
 ```
 
 Given a [Request][], returns a [TaskEither][] which makes an HTTP request and
-resolves with the [Result](#result). The TaskEither only rejects if a network
+resolves with the [Result](#fetchresult). The TaskEither only rejects if a network
 error was encountered, and always resolves if an HTTP response was
 successfully obtained.
 
@@ -196,51 +325,7 @@ successfully obtained.
 >
 > See the [simple usage example](#simple-example) for usage.
 
-### `retrieve`
-
-```ts
-declare const retrieve = (url: string) => (headers: Headers) => Request
-```
-
-Constructs a GET [Request][] for a given URL with the given [Headers][].
-Automatically sets the `redirect` option to `manual` for
-[`followRedirects`](#followredirects).
-
-> [!NOTE]
->
-> See the [simple usage example](#simple-example) for usage.
-
-### `send`
-
-```ts
-declare const send = (method: string) => (url: string) => (
-  (headers: Headers) => (body: BodyInit) => Request
-)
-```
-
-Constructs a [Request][] using the given [request method][], for a given URL,
-with the given [Headers][], and a given [request body][]. Automatically sets
-the `redirect` option to `manual` for [`followRedirects`](#followredirects).
-
-> [!NOTE]
->
-> See the [extended usage example](#extended-example) for usage.
-
-### `sendJson`
-
-```ts
-declare const const sendJson = (method: string) => (url: string) => (
-  (headers: Headers) => (body: Json) => Request
-)
-```
-
-The same as [send](#send), but specifically for [Json][] bodies. The resulting
-Request automatically includes a `Content-Type` header with `application/json`,
-and the body is automatically stringified with `JSON.stringify`. Automatically
-sets the `redirect` option to `manual` for
-[`followRedirects`](#followredirects).
-
-### `matchStatus`
+#### `Fetch.matchStatus`
 
 ```ts
 declare type Transform<A> = (result: Result) => A
@@ -252,19 +337,19 @@ declare const matchStatus = (
 )
 ```
 
-Case-analysis of a [Result](#result) using the [Response][]'s status code as
-the differentiator. This makes it easy to handle different response status codes
-in different ways.
+Case-analysis of a [Result](#fetchresult) using the [Response][]'s status code
+as the differentiator. This makes it easy to handle different response status
+codes in different ways.
 
 The first argument is used to transform any results that didn't match the given
-pattern. The [`error`](#error) function is provided as a convenient value to
-use here for catching unexpected cases.
+pattern. The [`error`](#fetcherror) function is provided as a convenient value
+to use here for catching unexpected cases.
 
 > [!NOTE]
 >
 > See the [extended usage example](#extended-example) for usage.
 
-### `matchStatusW`
+#### `Fetch.matchStatusW`
 
 ```ts
 declare type Transform<A> = (result: Result) => A
@@ -278,9 +363,9 @@ declare const matchStatus = (
 )
 ```
 
-A type-widening version of [`matchStatus`](#matchstatus).
+A type-widening version of [`matchStatus`](#fetchmatchstatus).
 
-### `acceptStatus`
+#### `Fetch.acceptStatus`
 
 ```ts
 declare const acceptStatus = (code: number) => (result: Result) => (
@@ -288,7 +373,7 @@ declare const acceptStatus = (code: number) => (result: Result) => (
 )
 ```
 
-Tags a [Result](#result) by its [Response][]'s status code. Enables easy
+Tags a [Result](#fetchresult) by its [Response][]'s status code. Enables easy
 code branching based on the status code of a response.
 
 The example below extends the [simple usage example](#simple-example) so that
@@ -314,7 +399,7 @@ const task = pipe(
 task().then(console.log);
 ```
 
-### `followRedirects`
+#### `Fetch.followRedirects`
 
 ```ts
 declare const followRedirects: (max: number) => (result: Result) => (
@@ -323,8 +408,8 @@ declare const followRedirects: (max: number) => (result: Result) => (
 ```
 
 A default way to follow redirects up to a given number of redirections. Uses
-the [default redirection strategy](#defaultredirectionstrategy). See
-[`followRedirectsWith`](#followredirectswith) for more information.
+the [default redirection strategy](#fetchdefaultredirectionstrategy). See
+[`followRedirectsWith`](#fetchfollowredirectswith) for more information.
 
 The example below extends the [simple usage example](#simple-example) so that
 redirects are automatically followed, up to a maximum of 20 redirections.
@@ -346,7 +431,7 @@ const task = pipe(
 task().then(console.log);
 ```
 
-### `RedirectionStrategy`
+#### `Fetch.RedirectionStrategy`
 
 ```ts
 declare type Transform<A> = (result: Result) => A
@@ -355,67 +440,70 @@ declare type RedirectionStrategy = Transform<Request>
 ```
 
 The `RedirectionStrategy` type alias embodies what it means to redirect. It's
-just a transformation of a [Result](#result) to a new [Request][]. Redirection
-Strategies are used by [`followRedirectsWith`](#followredirectswith) to
-determine its redirection behaviour.
+just a transformation of a [Result](#fetchresult) to a new [Request][].
+Redirection Strategies are used by
+[`followRedirectsWith`](#fetchfollowredirectswith) to determine its
+redirection behaviour.
 
-### `redirectAnyRequest`
+#### `Fetch.redirectAnyRequest`
 
-A [Redirection Strategy](#RedirectionStrategy) that will indiscriminately follow
-redirects as long as the response contains a `Location` header.
+A [Redirection Strategy](#fetchredirectionstrategy) that will indiscriminately
+follow redirects as long as the response contains a `Location` header.
 
 If the new location is on an external host, then any confidential headers
 (such as the cookie header) will be dropped from the new request.
 
-Used in the [`defaultRedirectionStrategy`](#defaultredirectionstrategy) and the
-[`aggressiveRedirectionStrategy`](#aggressiveredirectionstrategy).
+Used in the [`defaultRedirectionStrategy`](#fetchdefaultredirectionstrategy)
+and the [`aggressiveRedirectionStrategy`](#fetchaggressiveredirectionstrategy).
 
-### `redirectIfGetMethod`
+#### `Fetch.redirectIfGetMethod`
 
-A [Redirection Strategy](#RedirectionStrategy) that will follow
+A [Redirection Strategy](#fetchredirectionstrategy) that will follow
 redirects as long as the response contains a `Location` header and the request
 was issued using the `GET` method.
 
 If the new location is on an external host, then any confidential headers
 (such as the cookie header) will be dropped from the new request.
 
-Used in the [`defaultRedirectionStrategy`](#defaultredirectionstrategy).
+Used in the [`defaultRedirectionStrategy`](#fetchdefaultredirectionstrategy).
 
-### `redirectUsingGetMethod`
+#### `Fetch.redirectUsingGetMethod`
 
-A [Redirection Strategy](#RedirectionStrategy) that sends a new `GET` request
-based on the original request to the Location specified in the given Response.
-If the response does not contain a location, the request is not redirected.
+A [Redirection Strategy](#fetchredirectionstrategy) that sends a new `GET`
+request based on the original request to the Location specified in the given
+Response. If the response does not contain a location, the request is not
+redirected.
 
 The original request method and body are discarded, but other properties are
 preserved. If the new location is on an external host, then any confidential
 headers (such as the cookie header) will be dropped from the new request.
 
-Used in the [`defaultRedirectionStrategy`](#defaultredirectionstrategy) and the
-[`aggressiveRedirectionStrategy`](#aggressiveredirectionstrategy).
+Used in the [`defaultRedirectionStrategy`](#fetchdefaultredirectionstrategy)
+and the [`aggressiveRedirectionStrategy`](#fetchaggressiveredirectionstrategy).
 
-### `retryWithoutCondition`
+#### `Fetch.retryWithoutCondition`
 
-A [Redirection Strategy](#RedirectionStrategy) that will retry the same request
+A [Redirection Strategy](#redirectionstrategy) that will retry the same request
 but without any [conditional headers][], to ensure that caching layers are
 skipped.
 
-Used in the [`aggressiveRedirectionStrategy`](#aggressiveredirectionstrategy).
+Used in the
+[`aggressiveRedirectionStrategy`](#fetchaggressiveredirectionstrategy).
 
-### `defaultRedirectionStrategy`
+#### `Fetch.defaultRedirectionStrategy`
 
-A [Redirection Strategy](#RedirectionStrategy) that carefully follows redirects
-in strict accordance with [RFC2616 Section 10.3][].
+A [Redirection Strategy](#fetchredirectionstrategy) that carefully follows
+redirects in strict accordance with [RFC2616 Section 10.3][].
 
 Redirections with status codes 301, 302, and 307 are only followed if the
 original request used the GET method, and redirects with status code 304 are
 left alone for a caching layer to deal with.
 
 This redirection strategy is used by the simple
-[`followRedirects`](#followredirects) function.
+[`followRedirects`](#fetchfollowredirects) function.
 
 If you want to modify or extend its behaviour for specific status codes, you can
-use the [`matchStatus`](#matchstatus) function. In the example below, we
+use the [`matchStatus`](#fetchmatchstatus) function. In the example below, we
 override the behaviour for `301` responses to *never redirect* and for `307`
 responses to *always redirect*:
 
@@ -431,11 +519,12 @@ const myRedirectionStrategy = (
 );
 ```
 
-See also the [`aggressiveRedirectionStrategy`](#aggressiveredirectionstrategy).
+See also the
+[`aggressiveRedirectionStrategy`](#fetchaggressiveredirectionstrategy).
 
-### `aggressiveRedirectionStrategy`
+#### `Fetch.aggressiveRedirectionStrategy`
 
-A [Redirection Strategy](#RedirectionStrategy) that aggressively follows
+A [Redirection Strategy](#fetchredirectionstrategy) that aggressively follows
 redirects in mild violation of [RFC2616 Section 10.3][]. In particular, anywhere
 that a redirection should be interrupted for user confirmation or caching, this
 policy follows the redirection nonetheless.
@@ -444,11 +533,11 @@ Redirections with status codes 301, 302, and 307 are always followed without
 user intervention, and redirects with status code 304 are retried without
 conditions if the original request had any conditional headers.
 
-See also the [`defaultRedirectionStrategy`](#defaultredirectionstrategy). The
-aggressive strategy can be extended/customized in the same way that the default
-one can.
+See also the [`defaultRedirectionStrategy`](#fetchdefaultredirectionstrategy).
+The aggressive strategy can be extended/customized in the same way that the
+default one can.
 
-### `followRedirectsWith`
+#### `Fetch.followRedirectsWith`
 
 ```ts
 declare const followRedirectsWith: (strategy: RedirectionStrategy) => (
@@ -456,69 +545,69 @@ declare const followRedirectsWith: (strategy: RedirectionStrategy) => (
 )
 ```
 
-Given a [Redirection Strategy](#RedirectionStrategy), a maximum number of
-redirects, and a [Result](#result), returns a [TaskEither][] that will transfer
-the new requests provided by the given strategy for as long as some conditions
-hold:
+Given a [Redirection Strategy](#fetchredirectionstrategy), a maximum number of
+redirects, and a [Result](#fetchresult), returns a [TaskEither][] that will
+transfer the new requests provided by the given strategy for as long as some
+conditions hold:
 
 1. The maximum number of transferred requests has not been exceeded; and
-2. the request has not been sent before.
+2. an [equivalent](#reqequivalent) request has not been sent before.
 
-This means that a [Redirection Strategy](#RedirectionStrategy) can signal that
-it's done redirecting by simply returning the original request.
+This means that a [Redirection Strategy](#fetchredirectionstrategy) can signal
+that it's done redirecting by simply returning the original request.
 
 It also means that exceeding the maximum number of redirects is not seen as an
 error, and won't reject any tasks. Instead, the `3xx` response is returned
-normally as part of the final [Result](#result). Users are expected to handle
-redirects that couldn't be followed by observing a `3xx` response status code
-after attempting to follow redirects. Thankfully, this will typically happen
-automatically as a result of using [`acceptStatus`](#acceptstatus) or
-[`matchStatus`](#matchstatus).
+normally as part of the final [Result](#fetchresult). Users are expected to
+handle redirects that couldn't be followed by observing a `3xx` response status
+code after attempting to follow redirects. Thankfully, this will typically
+happen automatically as a result of using [`acceptStatus`](#fetchacceptstatus)
+or [`matchStatus`](#fetchmatchstatus).
 
 > [!NOTE]
 >
 > See the [extended usage example](#extended-example) for usage.
 
-### `blob`
+#### `Fetch.blob`
 
 ```ts
 declare const blob: (result: Result) => TaskEither<Error, Blob>
 ```
 
-Convert a [Result](#result) to a [Blob][] using [`Response#blob()`][].
+Convert a [Result](#fetchresult) to a [Blob][] using [`Response#blob()`][].
 
-### `text`
+#### `Fetch.text`
 
 ```ts
 declare const text: (result: Result) => TaskEither<Error, string>
 ```
 
-Convert a [Result](#result) to a string using [`Response#text()`][].
+Convert a [Result](#fetchresult) to a string using [`Response#text()`][].
 
-### `json`
+#### `Fetch.json`
 
 ```ts
 declare const json: (result: Result) => TaskEither<Error, Json>
 ```
 
-Convert a [Result](#result) to [Json][] using [`Response#json()`][].
+Convert a [Result](#fetchresult) to [Json][] using [`Response#json()`][].
 
-### `buffer`
+#### `Fetch.buffer`
 
 ```ts
 declare const buffer: (result: Result) => TaskEither<Error, ArrayBuffer>
 ```
 
-Convert a [Result](#result) to an [ArrayBuffer][] using
+Convert a [Result](#fetchresult) to an [ArrayBuffer][] using
 [`Response#arrayBuffer()`][].
 
-### `error`
+#### `Fetch.error`
 
 ```ts
 declare const error: (result: Result) => TaskEither<Error, never>
 ```
 
-Convert a [Result](#result) to an [Error][] formatted like:
+Convert a [Result](#fetchresult) to an [Error][] formatted like:
 
 ```txt
 Unexpected <statusText> (<statusCode>) response. Response body:
@@ -529,21 +618,34 @@ Unexpected <statusText> (<statusCode>) response. Response body:
 The resulting `TaskEither` is always rejected with the resulting Error.
 
 This function is a convenience function to use as a default handler for
-unexpected cases in, for example, [`matchStatus`](#matchstatus).
+unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
 
-[Blob]: https://developer.mozilla.org/docs/Web/API/Blob
-[ArrayBuffer]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
-[Error]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
+[Fetch API]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
 [Request]: https://developer.mozilla.org/docs/Web/API/Request
+[request options]: https://developer.mozilla.org/docs/Web/API/Request/Request#options
+[request body]: https://developer.mozilla.org/docs/Web/API/Request/body
+[request method]: https://developer.mozilla.org/docs/Web/API/Request/method
+[request headers]: https://developer.mozilla.org/docs/Web/API/Request/headers
+[redirect mode]: https://developer.mozilla.org/docs/Web/API/Request/redirect
+
 [Response]: https://developer.mozilla.org/docs/Web/API/Response
 [`Response#text()`]: https://developer.mozilla.org/docs/Web/API/Response/text
 [`Response#blob()`]: https://developer.mozilla.org/docs/Web/API/Response/blob
 [`Response#json()`]: https://developer.mozilla.org/docs/Web/API/Response/json
 [`Response#arrayBuffer()`]: https://developer.mozilla.org/docs/Web/API/Response/arrayBuffer
+
+[Blob]: https://developer.mozilla.org/docs/Web/API/Blob
+[ArrayBuffer]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+[TypedArray]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
+[DataView]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/DataView
+[FormData]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
+[URLSearchParams]: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+[ReadableStream]: https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
+[Error]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
+[URL]: https://developer.mozilla.org/docs/Web/API/URL
 [Headers]: https://developer.mozilla.org/docs/Web/API/Headers
 [conditional headers]: https://developer.mozilla.org/docs/Web/HTTP/Headers#Conditionals
-[request body]: https://developer.mozilla.org/docs/Web/API/Request/Request#body
-[request method]: https://developer.mozilla.org/docs/Web/API/Request/Request#method
 
 [TaskEither]: https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html
 [Tuple]: https://gcanti.github.io/fp-ts/modules/Tuple.ts.html

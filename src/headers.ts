@@ -6,6 +6,24 @@ import {Eq as StringEq} from 'fp-ts/lib/string'
 
 export type Header = [key: string, value: string];
 
+export const set = (name: string, value: string) => (headers: Headers) => {
+  const clone = new Headers(headers);
+  clone.set(name, value);
+  return clone;
+};
+
+export const append = (name: string, value: string) => (headers: Headers) => {
+  const clone = new Headers(headers);
+  clone.append(name, value);
+  return clone;
+};
+
+export const unset = (name: string) => (headers: Headers) => {
+  const clone = new Headers(headers);
+  clone.delete(name);
+  return clone;
+};
+
 export const from = (xs: Record<string, string>) => new Headers(xs);
 
 export const fromArray = (xs: Header[]) => new Headers(xs);
