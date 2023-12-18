@@ -231,6 +231,14 @@ declare const method: (method: string) => (request: Request) => Request
 
 Sets the [request method][] of a request to the given value.
 
+#### `Req.headers`
+
+```ts
+declare const headers: (headers: Headers) => (request: Request) => Request
+```
+
+Override all of the [request headers][] on a request with the given [Headers][].
+
 #### `Req.header`
 
 ```ts
