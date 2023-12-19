@@ -280,11 +280,91 @@ to cache-bust out of a 304 response.
 
 ### The `Url` module
 
-TODO
+Utilities for creation and immutable transformations of [URL][] instances.
+You will likely only use this module indirectly via
+[the `Request` module](#the-request-module).
 
 ```ts
 import * as Url from 'fp-ts-fetch/Url';
 ```
+
+#### `Url.parse`
+
+```ts
+declare const parse: (url: string) => Option<URL>
+```
+
+Safely parse a string to a [URL][].
+
+#### `Url.unsafeParse`
+
+```ts
+declare const unsafeParse: (url: string) => URL
+```
+
+Parse a string to a [URL][]. Throws a `TypeError` if the string could not be
+parsed. This function can be useful when parsing strings that you already know
+are valid URLs, like for example the [request URL][] property. For all other
+cases, we recommend using [`Url.parse`](#urlparse).
+
+#### `Url.navigate`
+
+```ts
+declare const navigate: (location: string) => (base: URL) => Option<URL>
+```
+
+"Navigate" from the given [URL][] to a given location, returning the URL that
+represents the fully qualified new location.
+
+```ts
+import * as Url from 'fp-ts-fetch/Url';
+import * as O from 'fp-ts/Option';
+import {pipe} from 'fp-ts/function';
+
+assert.deepStrictEqual(
+  pipe(
+    Url.parse('https://example.com'),
+    O.chain(Url.navigate('/test.html')),
+    O.map(String)
+  ),
+  O.some('https://example.com/test.html'),
+);
+```
+
+#### `Url.params`
+
+```ts
+declare const params: (params: URLSearchParams) => (url: URL) => URL
+```
+
+Override the `searchParams` property of a [URL][] with the provided one.
+
+#### `Url.param`
+
+```ts
+declare const param: (key: string, value: string) => (url: URL) => URL
+```
+
+Set the search parameter identified by the given key to the given value
+on a [URL][].
+
+#### `Url.unsetParam`
+
+```ts
+declare const unsetParam: (key: string) => (url: URL) => URL
+```
+
+Remove the search parameter identified by the given key from a [URL][].
+
+#### `Url.sameOrigin`
+
+```ts
+declare const sameOrigin: (origin: URL) => (dest: URL) => boolean
+```
+
+Returns `true` if the given destination [URL][] is considered to be on the same
+origin as a given origin [URL][]. A protocol downgrade (from https to http) is
+also considered a different origin.
 
 ### The `Request` module
 
@@ -603,8 +683,10 @@ redirection behaviour.
 A [Redirection Strategy](#fetchredirectionstrategy) that will indiscriminately
 follow redirects as long as the response contains a `Location` header.
 
-If the new location is on an external host, then any confidential headers
-(such as the cookie header) will be dropped from the new request.
+If the new location is on an external host (according to
+[`Url.sameOrigin`](#urlsameorigin)), then any confidential headers will be
+dropped from the new request (using
+[`Headers.omitConfidential`](#headersomitconfidential)).
 
 Used in the [`defaultRedirectionStrategy`](#fetchdefaultredirectionstrategy)
 and the [`aggressiveRedirectionStrategy`](#fetchaggressiveredirectionstrategy).
