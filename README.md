@@ -172,13 +172,111 @@ task().then(console.log);
 
 ## API
 
+This package exports five modules:
+
+- [The `Headers` module](#the-headers-module) for working with [Headers][].
+- [The `Url` module](#the-url-module) for workig with [URL][]s.
+- [The `Request` module](#the-request-module) for working with [Request][]s.
+- [The `Response` module](#the-response-module) for working with [Response][]s.
+- [The `Fetch` module](#the-fetch-module) that puts it all together.
+
+> [!TIP]
+>
+> In most cases you'll only need [the `Request` module](#the-request-module)
+> for creating [Request][]s, and [the `Fetch` module](#the-fetch-module) for
+> transferring those requests and processing their [Result](#fetchresult).
+
 ### The `Headers` module
 
-TODO
+Utilities for creation and immutable transformations of [Headers][] instances.
+You will likely only use this module indirectly via
+[the `Request` module](#the-request-module).
 
 ```ts
 import * as Headers from 'fp-ts-fetch/Headers';
 ```
+
+#### `Headers.Eq`
+
+```ts
+declare const Eq: Eq<Headers>
+```
+
+An [Eq][] instance for [Headers][]. Two Headers collections are considered
+equal if and only if they have the same amount of keys, and the same value at
+each corresponding key. The insertion order of keys is not considered.
+
+#### `Headers.from`
+
+```ts
+declare const from: (xs: Record<string, string>) => Headers
+```
+
+Constructs a new [Headers][] from a string-map of keys and values.
+
+#### `Headers.lookup`
+
+```ts
+declare const lookup: const lookup: (name: string) => (headers: Headers) => O.Option<string>
+```
+
+Obtain the value corresponding to the given header name from the given
+[Headers][]. The name is case insensitive.
+
+#### `Headers.set`
+
+```ts
+declare const set: (name: string, value: string) => (headers: Headers) => Headers
+```
+
+Set a header to the given value in the given [Headers][]. This overrides
+previous values if they were present.
+
+> [!IMPORTANT]
+>
+> The comma symbol (`,`) has special meaning to many servers as a separator of
+> values for headers that have multiple values. Any commas in the value provided
+> are **not** automatically escaped. See also [`append`](#headersappend).
+
+#### `Headers.append`
+
+```ts
+declare const append: (name: string, value: string) => (headers: Headers) => Headers
+```
+
+Appends the given value to any potentially existing value corresponding to the
+given key in the given [Headers][]. This is done by adding a comma at the end
+of the existing value, and concatenating the given value. If the given value
+also contains commas, then these are **not** escaped, and so might be treated
+by a server as multiple values.
+
+#### `Headers.unset`
+
+```ts
+declare const unset: (name: string) => (headers: Headers) => Headers
+```
+
+Remove the header of the given name from the given [Headers][].
+
+#### `Headers.omitConfidential`
+
+```ts
+declare const omitConfidential: (headers: Headers) => Headers
+```
+
+Removes authorization and cookie headers from the given [Headers][]. This is
+used by [`Fetch.followRedirects`](#fetchfollowredirects) to avoid CVE-2022-0155.
+
+#### `Headers.omitConditional`
+
+```ts
+declare const omitConditional: (headers: Headers) => Headers
+```
+
+Removes any client-side [conditional headers][] from the given [Headers][].
+This is used by the
+[aggressive redirection strategy](#fetchaggressiveredirectionstrategy)
+to cache-bust out of a 304 response.
 
 ### The `Url` module
 
@@ -285,7 +383,8 @@ Override all of the [request headers][] on a request with the given [Headers][].
 declare const header: (name: string, value: string) => (request: Request) => Request
 ```
 
-Sets one of the [request headers][] of a request to the given value.
+Sets one of the [request headers][] of a request to the given value. Uses
+[`Headers.set`](#headersset) so be aware of its gotchas.
 
 #### `Req.append`
 
@@ -293,7 +392,8 @@ Sets one of the [request headers][] of a request to the given value.
 declare const append: (name: string, value: string) => (request: Request) => Request
 ```
 
-Appends a second value to one of the [request headers][] of a request.
+Appends a second value to one of the [request headers][] of a request. Uses
+[`Headers.append`](#headersappend) so be aware of its gotchas.
 
 #### `Req.unset`
 
@@ -301,7 +401,8 @@ Appends a second value to one of the [request headers][] of a request.
 declare const unset: (name: string) => (request: Request) => Request
 ```
 
-Removes one of the [request headers][] from a request.
+Removes one of the [request headers][] from a request via
+[`Headers.unset`](#headersunset).
 
 #### `Req.body`
 
@@ -702,6 +803,7 @@ unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
 
 [TaskEither]: https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html
 [Tuple]: https://gcanti.github.io/fp-ts/modules/Tuple.ts.html
+[Eq]: https://gcanti.github.io/fp-ts/modules/Eq.ts.html
 [Json]: https://gcanti.github.io/fp-ts/modules/Json.ts.html
 [io-ts]: https://gcanti.github.io/io-ts/
 [retry-ts]: https://gcanti.github.io/retry-ts/
