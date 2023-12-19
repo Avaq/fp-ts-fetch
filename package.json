@@ -4,7 +4,8 @@
   "description": "Fetch wrapper for fp-ts users",
   "type": "module",
   "exports": {
-    ".": "./lib/index.js",
+    ".": "./lib/Fetch.js",
+    "./Fetch": "./lib/Fetch.js",
     "./Headers": "./lib/Headers.js",
     "./Request": "./lib/Request.js",
     "./Response": "./lib/Response.js",
