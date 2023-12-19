@@ -516,11 +516,65 @@ considered equivalent if all properties except for the body are the same.
 
 ### The `Response` module
 
-TODO
+Utilities for working with the [Response][] type. You will likely only use this
+module indirectly via [the `Fetch` module](#the-fetch-module), working with the
+[`Result` type](#fetchresult).
 
 ```ts
 import * as Res from 'fp-ts-fetch/Response';
 ```
+
+#### `Response.blob`
+
+```ts
+declare const blob: (result: Result) => TaskEither<Error, Blob>
+```
+
+Convert a [Response][] to a [Blob][] using [`Response#blob()`][].
+
+#### `Response.text`
+
+```ts
+declare const text: (result: Result) => TaskEither<Error, string>
+```
+
+Convert a [Response][] to a string using [`Response#text()`][].
+
+#### `Response.json`
+
+```ts
+declare const json: (result: Result) => TaskEither<Error, Json>
+```
+
+Convert a [Response][] to [Json][] using [`Response#json()`][].
+
+#### `Response.buffer`
+
+```ts
+declare const buffer: (result: Result) => TaskEither<Error, ArrayBuffer>
+```
+
+Convert a [Response][] to an [ArrayBuffer][] using
+[`Response#arrayBuffer()`][].
+
+#### `Response.error`
+
+```ts
+declare const error: (result: Result) => TaskEither<Error, never>
+```
+
+Convert a [Response][] to an [Error][] formatted like:
+
+```txt
+Unexpected <statusText> (<statusCode>) response. Response body:
+
+  <body_as_text>
+```
+
+The resulting `TaskEither` is always rejected with the resulting Error.
+
+This function is a convenience function to use as a default handler for
+unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
 
 ### The `Fetch` module
 
@@ -550,8 +604,8 @@ declare const request = (request: Request) => TaskEither<Error, Result>
 ```
 
 Given a [Request][], returns a [TaskEither][] which makes an HTTP request and
-resolves with the [Result](#fetchresult). The TaskEither only rejects if a network
-error was encountered, and always resolves if an HTTP response was
+resolves with the [Result](#fetchresult). The TaskEither only rejects if a
+network error was encountered, and always resolves if an HTTP response was
 successfully obtained.
 
 > [!NOTE]
@@ -809,7 +863,8 @@ or [`matchStatus`](#fetchmatchstatus).
 declare const blob: (result: Result) => TaskEither<Error, Blob>
 ```
 
-Convert a [Result](#fetchresult) to a [Blob][] using [`Response#blob()`][].
+Shorthand for using [`Response.blob`](#responseblob) on the [Response][]
+of a [Result](#fetchresult).
 
 #### `Fetch.text`
 
@@ -817,7 +872,8 @@ Convert a [Result](#fetchresult) to a [Blob][] using [`Response#blob()`][].
 declare const text: (result: Result) => TaskEither<Error, string>
 ```
 
-Convert a [Result](#fetchresult) to a string using [`Response#text()`][].
+Shorthand for using [`Response.text`](#responsetext) on the [Response][]
+of a [Result](#fetchresult).
 
 #### `Fetch.json`
 
@@ -825,7 +881,8 @@ Convert a [Result](#fetchresult) to a string using [`Response#text()`][].
 declare const json: (result: Result) => TaskEither<Error, Json>
 ```
 
-Convert a [Result](#fetchresult) to [Json][] using [`Response#json()`][].
+Shorthand for using [`Response.json`](#responsejson) on the [Response][]
+of a [Result](#fetchresult).
 
 #### `Fetch.buffer`
 
@@ -833,8 +890,8 @@ Convert a [Result](#fetchresult) to [Json][] using [`Response#json()`][].
 declare const buffer: (result: Result) => TaskEither<Error, ArrayBuffer>
 ```
 
-Convert a [Result](#fetchresult) to an [ArrayBuffer][] using
-[`Response#arrayBuffer()`][].
+Shorthand for using [`Response.buffer`](#responsebuffer) on the [Response][]
+of a [Result](#fetchresult).
 
 #### `Fetch.error`
 
@@ -842,18 +899,8 @@ Convert a [Result](#fetchresult) to an [ArrayBuffer][] using
 declare const error: (result: Result) => TaskEither<Error, never>
 ```
 
-Convert a [Result](#fetchresult) to an [Error][] formatted like:
-
-```txt
-Unexpected <statusText> (<statusCode>) response. Response body:
-
-  <body_as_text>
-```
-
-The resulting `TaskEither` is always rejected with the resulting Error.
-
-This function is a convenience function to use as a default handler for
-unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
+Shorthand for using [`Response.error`](#responseerror) on the [Response][]
+of a [Result](#fetchresult).
 
 [Fetch API]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 
