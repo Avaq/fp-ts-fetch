@@ -41,7 +41,7 @@ to the console instead.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
-import * as Req from 'fp-ts-fetch/request';
+import * as Req from 'fp-ts-fetch/lib/Request';
 import {identity, pipe} from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 
@@ -77,7 +77,7 @@ It features:
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
-import * as Headers from 'fp-ts-fetch/headers';
+import * as Req from 'fp-ts-fetch/lib/Request';
 import * as FS from 'node:fs/promises';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
@@ -176,16 +176,24 @@ task().then(console.log);
 
 TODO
 
+```ts
+import * as Headers from 'fp-ts-fetch/lib/Headers';
+```
+
 ### The `Url` module
 
 TODO
+
+```ts
+import * as Url from 'fp-ts-fetch/lib/Url';
+```
 
 ### The `Request` module
 
 Immutable utilities for the [Request][] type.
 
 ```ts
-import * as Req from 'fp-ts-fetch/request';
+import * as Req from 'fp-ts-fetch/lib/Request';
 ```
 
 #### `Req.to`
@@ -328,6 +336,10 @@ considered equivalent if all properties except for the body are the same.
 ### The `Response` module
 
 TODO
+
+```ts
+import * as Res from 'fp-ts-fetch/lib/Response';
+```
 
 ### The `Fetch` module
 

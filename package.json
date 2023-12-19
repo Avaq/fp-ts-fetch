@@ -2,7 +2,7 @@
   "name": "fp-ts-fetch",
   "version": "0.0.3",
   "description": "Fetch wrapper for fp-ts users",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "type": "commonjs",
   "scripts": {
     "test": "tsc -p tsconfig.json",
@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/avaq/fp-ts-fetch",
   "files": [
-    "dist/",
+    "lib/",
     "package.json",
     "README.md",
     "LICENSE.md"

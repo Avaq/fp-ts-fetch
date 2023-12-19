@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "outDir": "./dist",
+    "outDir": "./lib",
     "target": "es2016",
     "module": "commonjs",
     "moduleResolution": "node",

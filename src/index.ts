@@ -5,10 +5,10 @@ import * as R from 'fp-ts/lib/Record';
 import * as O from 'fp-ts/lib/Option';
 import * as T from 'fp-ts/lib/ReadonlyTuple';
 
-import * as H from './headers';
-import * as U from './url';
-import * as Req from './request';
-import * as Res from './response';
+import * as H from './Headers';
+import * as U from './Url';
+import * as Req from './Request';
+import * as Res from './Response';
 
 export type Result = readonly [Response, Request];
 
