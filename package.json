@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "tsc -p tsconfig.json",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
