@@ -41,7 +41,7 @@ to the console instead.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
-import * as Req from 'fp-ts-fetch/lib/Request';
+import * as Req from 'fp-ts-fetch/Request';
 import {identity, pipe} from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 
@@ -77,7 +77,7 @@ It features:
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
-import * as Req from 'fp-ts-fetch/lib/Request';
+import * as Req from 'fp-ts-fetch/Request';
 import * as FS from 'node:fs/promises';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
@@ -177,7 +177,7 @@ task().then(console.log);
 TODO
 
 ```ts
-import * as Headers from 'fp-ts-fetch/lib/Headers';
+import * as Headers from 'fp-ts-fetch/Headers';
 ```
 
 ### The `Url` module
@@ -185,7 +185,7 @@ import * as Headers from 'fp-ts-fetch/lib/Headers';
 TODO
 
 ```ts
-import * as Url from 'fp-ts-fetch/lib/Url';
+import * as Url from 'fp-ts-fetch/Url';
 ```
 
 ### The `Request` module
@@ -193,7 +193,7 @@ import * as Url from 'fp-ts-fetch/lib/Url';
 Immutable utilities for the [Request][] type.
 
 ```ts
-import * as Req from 'fp-ts-fetch/lib/Request';
+import * as Req from 'fp-ts-fetch/Request';
 ```
 
 #### `Req.to`
@@ -338,7 +338,7 @@ considered equivalent if all properties except for the body are the same.
 TODO
 
 ```ts
-import * as Res from 'fp-ts-fetch/lib/Response';
+import * as Res from 'fp-ts-fetch/Response';
 ```
 
 ### The `Fetch` module

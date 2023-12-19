@@ -2,8 +2,14 @@
   "name": "fp-ts-fetch",
   "version": "0.0.3",
   "description": "Fetch wrapper for fp-ts users",
-  "main": "lib/index.js",
-  "type": "commonjs",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js",
+    "./Headers": "./lib/Headers.js",
+    "./Request": "./lib/Request.js",
+    "./Response": "./lib/Response.js",
+    "./Url": "./lib/Url.js"
+  },
   "scripts": {
     "test": "tsc -p tsconfig.json",
     "build": "tsc -p tsconfig.build.json",

@@ -1,14 +1,14 @@
-import {pipe, constant, identity} from 'fp-ts/lib/function'
-import * as TE from 'fp-ts/lib/TaskEither';
-import * as E from 'fp-ts/lib/Either';
-import * as R from 'fp-ts/lib/Record';
-import * as O from 'fp-ts/lib/Option';
-import * as T from 'fp-ts/lib/ReadonlyTuple';
+import {pipe, constant, identity} from 'fp-ts/lib/function.js'
+import * as TE from 'fp-ts/lib/TaskEither.js';
+import * as E from 'fp-ts/lib/Either.js';
+import * as R from 'fp-ts/lib/Record.js';
+import * as O from 'fp-ts/lib/Option.js';
+import * as T from 'fp-ts/lib/ReadonlyTuple.js';
 
-import * as H from './Headers';
-import * as U from './Url';
-import * as Req from './Request';
-import * as Res from './Response';
+import * as H from './Headers.js';
+import * as U from './Url.js';
+import * as Req from './Request.js';
+import * as Res from './Response.js';
 
 export type Result = readonly [Response, Request];
 

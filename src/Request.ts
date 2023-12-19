@@ -1,7 +1,7 @@
-import {Json} from 'fp-ts/Json';
-import {flow, pipe} from 'fp-ts/function';
-import * as H from './Headers';
-import * as U from './Url';
+import {Json} from 'fp-ts/lib/Json.js';
+import {flow, pipe} from 'fp-ts/lib/function.js';
+import * as H from './Headers.js';
+import * as U from './Url.js';
 
 export const method = (method: string) => (request: Request) => (
   new Request(request, {method})

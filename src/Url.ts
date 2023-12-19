@@ -1,5 +1,5 @@
-import {some, none} from 'fp-ts/Option';
-import {pipe} from 'fp-ts/function';
+import {some, none} from 'fp-ts/lib/Option.js';
+import {pipe} from 'fp-ts/lib/function.js';
 
 export const params = (params: URLSearchParams) => (url: URL) => (
   Object.assign(new URL(url), {search: params.toString()})
