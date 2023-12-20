@@ -573,9 +573,6 @@ Unexpected <statusText> (<statusCode>) response. Response body:
 
 The resulting `TaskEither` is always rejected with the resulting Error.
 
-This function is a convenience function to use as a default handler for
-unexpected cases in, for example, [`matchStatus`](#fetchmatchstatus).
-
 ### The `Fetch` module
 
 Functional alternative to the [Fetch API][].
@@ -900,7 +897,9 @@ declare const error: (result: Result) => TaskEither<Error, never>
 ```
 
 Shorthand for using [`Response.error`](#responseerror) on the [Response][]
-of a [Result](#fetchresult).
+of a [Result](#fetchresult). This is a convenience function to use as a
+default handler for unexpected cases in, for example,
+[`matchStatus`](#fetchmatchstatus).
 
 [Fetch API]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 [runtime compatibility]: https://developer.mozilla.org/en-US/docs/Web/API/fetch#browser_compatibility
