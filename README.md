@@ -3,6 +3,11 @@
 Fetch wrapper for fp-ts users, inspired by
 [fluture-node](https://github.com/fluture-js/fluture-node/#http).
 
+> [!IMPORTANT]
+>
+> Requires Node.js version 20 or greater, or a modern browser.
+> See the exact [runtime compatibility][] table on MDN.
+
 ## Design Philosophy
 
 Because this library offers *yet another* HTTP client, you must be wondering
@@ -69,11 +74,6 @@ It features:
 - Request retrying using [retry-ts][].
 - Special handling of the 401 response code using
   [`matchStatus`](#fetchmatchstatus).
-
-> [!CAUTION]
->
-> This example **only works on Node 20** and up, or other runtimes that
-> impelement the `node:fs/promises` module.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
@@ -903,6 +903,7 @@ Shorthand for using [`Response.error`](#responseerror) on the [Response][]
 of a [Result](#fetchresult).
 
 [Fetch API]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+[runtime compatibility]: https://developer.mozilla.org/en-US/docs/Web/API/fetch#browser_compatibility
 
 [Request]: https://developer.mozilla.org/docs/Web/API/Request
 [request options]: https://developer.mozilla.org/docs/Web/API/Request/Request#options

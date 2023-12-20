@@ -20,6 +20,9 @@
     "type": "git",
     "url": "https://github.com/avaq/fp-ts-fetch.git"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "homepage": "https://github.com/avaq/fp-ts-fetch",
   "files": [
     "lib/",
