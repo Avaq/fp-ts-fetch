@@ -356,15 +356,16 @@ declare const unsetParam: (key: string) => (url: URL) => URL
 
 Remove the search parameter identified by the given key from a [URL][].
 
-#### `Url.sameOrigin`
+#### `Url.sameSite`
 
 ```ts
-declare const sameOrigin: (origin: URL) => (dest: URL) => boolean
+declare const sameSite: (origin: URL) => (dest: URL) => boolean
 ```
 
 Returns `true` if the given destination [URL][] is considered to be on the same
-origin as a given origin [URL][]. A protocol downgrade (from https to http) is
-also considered a different origin.
+site as a given origin [URL][]. Protocol downgrades (from https to http) are
+considered a change of site. Going to a deepser subdomain is **not** considered
+a change of site.
 
 ### The `Request` module
 
@@ -730,8 +731,8 @@ redirection behaviour.
 A [Redirection Strategy](#fetchredirectionstrategy) that will indiscriminately
 follow redirects as long as the response contains a `Location` header.
 
-If the new location is on an external host (according to
-[`Url.sameOrigin`](#urlsameorigin)), then any confidential headers will be
+If the new location is on an external site (according to
+[`Url.sameSite`](#urlsamesite)), then any confidential headers will be
 dropped from the new request (using
 [`Headers.omitConfidential`](#headersomitconfidential)).
 

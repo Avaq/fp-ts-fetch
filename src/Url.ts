@@ -29,7 +29,7 @@ export const navigate = (location: string) => (base: URL): Option<URL> => (
   URL.canParse(location, base.toString()) ? some(new URL(location, base)) : none
 );
 
-export const sameOrigin = (origin: URL) => (dest: URL) => (
+export const sameSite = (origin: URL) => (dest: URL) => (
   (origin.protocol === dest.protocol || dest.protocol === 'https:') &&
   (origin.host === dest.host || dest.host.endsWith ('.' + origin.host))
 );

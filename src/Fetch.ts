@@ -49,7 +49,7 @@ export const redirectAnyRequest: RedirectionStrategy = ([response, request]) => 
   O.fold(constant(request), ({origin, dest}) => pipe(
     request,
     Req.url(dest),
-    pipe(dest, U.sameOrigin(origin)) ? identity : Req.headers(
+    pipe(dest, U.sameSite(origin)) ? identity : Req.headers(
       H.omitConfidential(request.headers)
     )
   )),
