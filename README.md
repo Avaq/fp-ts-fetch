@@ -206,6 +206,14 @@ An [Eq][] instance for [Headers][]. Two Headers collections are considered
 equal if and only if they have the same amount of keys, and the same value at
 each corresponding key. The insertion order of keys is not considered.
 
+#### `Headers.Show`
+
+```ts
+declare const Show: Show<Headers>
+```
+
+A [Show][] instance for [Headers][].
+
 #### `Headers.from`
 
 ```ts
