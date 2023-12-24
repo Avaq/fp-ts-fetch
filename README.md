@@ -232,7 +232,7 @@ declare const set: (name: string, value: string) => (headers: Headers) => Header
 Set a header to the given value in the given [Headers][]. This overrides
 previous values if they were present.
 
-> [!IMPORTANT]
+> [!NOTE]
 >
 > The comma symbol (`,`) has special meaning to many servers as a separator of
 > values for headers that have multiple values. Any commas in the value provided
@@ -605,9 +605,7 @@ resolves with the [Result](#fetchresult). The TaskEither only rejects if a
 network error was encountered, and always resolves if an HTTP response was
 successfully obtained.
 
-> [!NOTE]
->
-> See the [simple usage example](#simple-example) for usage.
+See the [simple usage example](#simple-example) for usage.
 
 #### `Fetch.matchStatus`
 
@@ -629,9 +627,7 @@ The first argument is used to transform any results that didn't match the given
 pattern. The [`error`](#fetcherror) function is provided as a convenient value
 to use here for catching unexpected cases.
 
-> [!NOTE]
->
-> See the [extended usage example](#extended-example) for usage.
+See the [extended usage example](#extended-example) for usage.
 
 #### `Fetch.matchStatusW`
 
@@ -850,9 +846,7 @@ code after attempting to follow redirects. Thankfully, this will typically
 happen automatically as a result of using [`acceptStatus`](#fetchacceptstatus)
 or [`matchStatus`](#fetchmatchstatus).
 
-> [!NOTE]
->
-> See the [extended usage example](#extended-example) for usage.
+See the [extended usage example](#extended-example) for usage.
 
 #### `Fetch.blob`
 
