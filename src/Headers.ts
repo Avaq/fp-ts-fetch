@@ -5,6 +5,9 @@ import {Show as $Show} from 'fp-ts/lib/Show.js';
 import {getShow as getArrayShow} from 'fp-ts/lib/ReadonlyArray.js';
 import {Show as StrShow} from 'fp-ts/lib/string.js';
 
+// Header names cannot contain spaces
+export type HeaderName = string;
+
 export const Eq: $E.Eq<Headers> = {
   equals: (as, bs) => {
     let size = 0;
@@ -26,19 +29,19 @@ export const Show: $Show<Headers> = {
   show: xs => `new Headers(${ShowPairs.show([...xs.entries()])})`
 };
 
-export const set = (name: string, value: string) => (headers: Headers) => {
+export const set = (name: HeaderName, value: string) => (headers: Headers) => {
   const clone = new Headers(headers);
   clone.set(name, value);
   return clone;
 };
 
-export const append = (name: string, value: string) => (headers: Headers) => {
+export const append = (name: HeaderName, value: string) => (headers: Headers) => {
   const clone = new Headers(headers);
   clone.append(name, value);
   return clone;
 };
 
-export const unset = (name: string) => (headers: Headers) => {
+export const unset = (name: HeaderName) => (headers: Headers) => {
   const clone = new Headers(headers);
   clone.delete(name);
   return clone;
@@ -46,7 +49,7 @@ export const unset = (name: string) => (headers: Headers) => {
 
 export const from = (xs: Record<string, string>) => new Headers(xs);
 
-export const lookup = (name: string) => (headers: Headers) => pipe(
+export const lookup = (name: HeaderName) => (headers: Headers) => pipe(
   headers.get(name),
   O.fromNullable
 );

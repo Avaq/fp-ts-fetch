@@ -204,7 +204,8 @@ declare const Eq: Eq<Headers>
 
 An [Eq][] instance for [Headers][]. Two Headers collections are considered
 equal if and only if they have the same amount of keys, and the same value at
-each corresponding key. The insertion order of keys is not considered.
+each corresponding key. The insertion order of keys is not considered. The
+casing of header names is also not considered.
 
 #### `Headers.Show`
 
@@ -217,24 +218,36 @@ A [Show][] instance for [Headers][].
 #### `Headers.from`
 
 ```ts
-declare const from: (xs: Record<string, string>) => Headers
+declare const from: (xs: Record<HeaderName, string>) => Headers
 ```
 
 Constructs a new [Headers][] from a string-map of keys and values.
 
+> [!CAUTION]
+>
+> This function throws when the record contains invalid Header names.
+
 #### `Headers.lookup`
 
 ```ts
-declare const lookup: const lookup: (name: string) => (headers: Headers) => O.Option<string>
+declare const lookup: const lookup: (name: HeaderName) => (headers: Headers) => O.Option<string>
 ```
 
 Obtain the value corresponding to the given header name from the given
 [Headers][]. The name is case insensitive.
 
+> [!NOTE]
+>
+> Header lookup is case insensitive!
+
+> [!CAUTION]
+>
+> This function throws when the `name` parameter is not a valid Header name.
+
 #### `Headers.set`
 
 ```ts
-declare const set: (name: string, value: string) => (headers: Headers) => Headers
+declare const set: (name: HeaderName, value: string) => (headers: Headers) => Headers
 ```
 
 Set a header to the given value in the given [Headers][]. This overrides
@@ -246,10 +259,14 @@ previous values if they were present.
 > values for headers that have multiple values. Any commas in the value provided
 > are **not** automatically escaped. See also [`append`](#headersappend).
 
+> [!CAUTION]
+>
+> This function throws when the `name` parameter is not a valid Header name.
+
 #### `Headers.append`
 
 ```ts
-declare const append: (name: string, value: string) => (headers: Headers) => Headers
+declare const append: (name: HeaderName, value: string) => (headers: Headers) => Headers
 ```
 
 Appends the given value to any potentially existing value corresponding to the
@@ -258,13 +275,21 @@ of the existing value, and concatenating the given value. If the given value
 also contains commas, then these are **not** escaped, and so might be treated
 by a server as multiple values.
 
+> [!CAUTION]
+>
+> This function throws when the `name` parameter is not a valid Header name.
+
 #### `Headers.unset`
 
 ```ts
-declare const unset: (name: string) => (headers: Headers) => Headers
+declare const unset: (name: HeaderName) => (headers: Headers) => Headers
 ```
 
 Remove the header of the given name from the given [Headers][].
+
+> [!CAUTION]
+>
+> This function throws when the `name` parameter is not a valid Header name.
 
 #### `Headers.omitConfidential`
 
