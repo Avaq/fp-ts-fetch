@@ -1,5 +1,16 @@
+import {contramap} from 'fp-ts/lib/Eq.js';
 import {some, none, Option} from 'fp-ts/lib/Option.js';
+import {Eq as StrEq, Show as StrShow} from 'fp-ts/lib/string.js';
 import {pipe} from 'fp-ts/lib/function.js';
+import {Show as $Show} from 'fp-ts/lib/Show.js';
+
+// Note: As of the time of writing, URLs can only be compared (in Node) after
+//       converting them to string. See https://is.gd/78LE3y.
+export const Eq = pipe(StrEq, contramap((u: URL) => u.toString()));
+
+export const Show: $Show<URL> = {
+  show: u => `new URL(${StrShow.show(u.toString())})`
+};
 
 export const params = (params: URLSearchParams) => (url: URL) => {
   const out = new URL(url);

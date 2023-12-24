@@ -288,6 +288,22 @@ You will likely only use this module indirectly via
 import * as Url from 'fp-ts-fetch/Url';
 ```
 
+#### `Url.Eq`
+
+```ts
+declare const Eq: Eq<URL>
+```
+
+An [Eq][] instance for [URL][].
+
+#### `Url.Show`
+
+```ts
+declare const Show: Show<URL>
+```
+
+A [Show][] instance for [URL][].
+
 #### `Url.parse`
 
 ```ts
@@ -928,6 +944,7 @@ default handler for unexpected cases in, for example,
 [TaskEither]: https://gcanti.github.io/fp-ts/modules/TaskEither.ts.html
 [Tuple]: https://gcanti.github.io/fp-ts/modules/Tuple.ts.html
 [Eq]: https://gcanti.github.io/fp-ts/modules/Eq.ts.html
+[Show]: https://gcanti.github.io/fp-ts/modules/Show.ts.html
 [Json]: https://gcanti.github.io/fp-ts/modules/Json.ts.html
 [io-ts]: https://gcanti.github.io/io-ts/
 [retry-ts]: https://gcanti.github.io/retry-ts/
