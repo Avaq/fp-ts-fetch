@@ -332,6 +332,14 @@ declare const navigate: (location: string) => (base: URL) => Option<URL>
 "Navigate" from the given [URL][] to a given location, returning the URL that
 represents the fully qualified new location.
 
+> [!NOTE]
+>
+> A trailing slash in the origin URL makes a significant difference: Navigating
+> from `http://example.com/test/` to `home` produces
+> `http://example.com/test/home`, whereas `http://example.com/test` (wthout the
+> trailing slash) would result in `http://example.com/home` (`/test` got
+> replaced).
+
 ```ts
 import * as Url from 'fp-ts-fetch/Url';
 import * as O from 'fp-ts/Option';
