@@ -12,7 +12,7 @@
     "./Url": "./lib/Url.js"
   },
   "scripts": {
-    "test": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && oletus test/*.test.js",
     "build": "tsc -p tsconfig.build.json",
     "prepublish": "npm run build"
   },
@@ -33,7 +33,10 @@
   "author": "Aldwin Vlasblom <aldwin@avaq.it> (https://github.com/Avaq)",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.10.5",
+    "fast-check": "^3.15.0",
     "fp-ts": "^2.12.1",
+    "oletus": "^4.0.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
