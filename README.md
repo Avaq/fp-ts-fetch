@@ -432,6 +432,16 @@ Immutable utilities for the [Request][] type.
 import * as Req from 'fp-ts-fetch/Request';
 ```
 
+#### `Req.Eq`
+
+```ts
+declare const Eq: Eq<Request>
+```
+
+An [Eq][] instance for the [Request][] type. Compares two requests by all their
+[request properties][] except for the [request body][]. This is because to
+compare request bodies, they would have to be consumed.
+
 #### `Req.to`
 
 ```ts
@@ -562,15 +572,6 @@ declare const json: (json: Json) => (request: Request) => Request
 Sets the [request body][] of a request to the stringified result of the given
 [Json][] value. Also updates the [request headers][] to include a `Content-Type`
 with value `application/json`.
-
-#### `Req.equivalent`
-
-```ts
-delcare const equivalent: (left: Request) => (right: Request) => boolean
-```
-
-Returns `true` if two given [Request][]s are equivalent. Two requests are
-considered equivalent if all properties except for the body are the same.
 
 ### The `Response` module
 
@@ -891,7 +892,7 @@ transfer the new requests provided by the given strategy for as long as some
 conditions hold:
 
 1. The maximum number of transferred requests has not been exceeded; and
-2. an [equivalent](#reqequivalent) request has not been sent before.
+2. an [equivalent](#reqeq) request has not been sent before.
 
 This means that a [Redirection Strategy](#fetchredirectionstrategy) can signal
 that it's done redirecting by simply returning the original request.
@@ -958,6 +959,7 @@ default handler for unexpected cases in, for example,
 
 [Request]: https://developer.mozilla.org/docs/Web/API/Request
 [request options]: https://developer.mozilla.org/docs/Web/API/Request/Request#options
+[request properties]: https://developer.mozilla.org/en-US/docs/Web/API/Request#instance_properties
 [request URL]: https://developer.mozilla.org/docs/Web/API/Request/url
 [request body]: https://developer.mozilla.org/docs/Web/API/Request/body
 [request method]: https://developer.mozilla.org/docs/Web/API/Request/method

@@ -96,7 +96,7 @@ export const followRedirectsWith = (strategy: RedirectionStrategy) => (max: numb
       seen.push(result[1]);
       const nextRequest = strategy(result);
       for (let i = seen.length - 1; i >= 0; i -= 1) {
-        if (pipe(nextRequest, Req.equivalent(seen[i]))) {
+        if (Req.Eq.equals(seen[i], nextRequest)) {
           return TE.right(result);
         }
       }
