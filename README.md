@@ -236,10 +236,6 @@ declare const lookup: const lookup: (name: HeaderName) => (headers: Headers) => 
 Obtain the value corresponding to the given header name from the given
 [Headers][]. The name is case insensitive.
 
-> [!NOTE]
->
-> Header lookup is case insensitive!
-
 > [!CAUTION]
 >
 > This function throws when the `name` parameter is not a valid Header name.
