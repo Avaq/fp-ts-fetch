@@ -586,7 +586,7 @@ import * as Res from 'fp-ts-fetch/Response';
 #### `Response.blob`
 
 ```ts
-declare const blob: (result: Result) => TaskEither<Error, Blob>
+declare const blob: (response: Response) => TE.TaskEither<Error, Blob>
 ```
 
 Convert a [Response][] to a [Blob][] using [`Response#blob()`][].
@@ -594,7 +594,7 @@ Convert a [Response][] to a [Blob][] using [`Response#blob()`][].
 #### `Response.text`
 
 ```ts
-declare const text: (result: Result) => TaskEither<Error, string>
+declare const text: (response: Response) => TaskEither<Error, string>
 ```
 
 Convert a [Response][] to a string using [`Response#text()`][].
@@ -602,7 +602,7 @@ Convert a [Response][] to a string using [`Response#text()`][].
 #### `Response.json`
 
 ```ts
-declare const json: (result: Result) => TaskEither<Error, Json>
+declare const json: (response: Response) => TaskEither<Error, Json>
 ```
 
 Convert a [Response][] to [Json][] using [`Response#json()`][].
@@ -610,7 +610,7 @@ Convert a [Response][] to [Json][] using [`Response#json()`][].
 #### `Response.buffer`
 
 ```ts
-declare const buffer: (result: Result) => TaskEither<Error, ArrayBuffer>
+declare const buffer: (response: Response) => TaskEither<Error, ArrayBuffer>
 ```
 
 Convert a [Response][] to an [ArrayBuffer][] using
@@ -619,7 +619,7 @@ Convert a [Response][] to an [ArrayBuffer][] using
 #### `Response.error`
 
 ```ts
-declare const error: (result: Result) => TaskEither<Error, never>
+declare const error: (response: Response) => TaskEither<Error, never>
 ```
 
 Convert a [Response][] to an [Error][] formatted like:
