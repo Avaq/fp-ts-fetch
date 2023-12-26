@@ -720,12 +720,13 @@ non-200 responses are no longer handled the same way as 200 responses.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
+import * as Req from 'fp-ts-fetch/Request';
 import {identity, pipe} from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 
 const task = pipe(
-  Fetch.retrieve('https://example.com')(new Headers),
+  Req.get('https://example.com'),
   Fetch.transfer,
   TE.map(Fetch.acceptStatus(200)),
   TE.chainEitherK(E.mapLeft(([res]) => (
@@ -755,12 +756,13 @@ redirects are automatically followed, up to a maximum of 20 redirections.
 
 ```ts
 import * as Fetch from 'fp-ts-fetch';
+import * as Req from 'fp-ts-fetch/Request';
 import {identity, pipe} from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 
 const task = pipe(
-  Fetch.retrieve('https://example.com')(new Headers),
+  Req.get('https://example.com'),
   Fetch.transfer,
   TE.chain(Fetch.followRedirects(20)),
   TE.chain(Fetch.text),
