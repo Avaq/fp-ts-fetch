@@ -449,6 +449,11 @@ to `manual` to favour manual redirection via
 [`Fetch.followRedirects`](#fetchfollowredirects). All other [request options][]
 are left on their default values.
 
+> [!NOTE]
+>
+> When given a `string` for a `url`, this function will throw if the string is
+> not a valid URL. To be safe, use [`Url.parse`](#urlparse) first.
+
 #### `Req.get`
 
 ```ts
@@ -488,6 +493,11 @@ declare const url: (url: URL | string) => (request: Request) => Request
 ```
 
 Sets the [request URL][] to the given [URL][] or string.
+
+> [!NOTE]
+>
+> When given a `string` for a `url`, this function will throw if the string is
+> not a valid URL. To be safe, use [`Url.parse`](#urlparse) first.
 
 #### `Req.params`
 
