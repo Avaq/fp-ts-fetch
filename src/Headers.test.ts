@@ -6,7 +6,7 @@ import * as O from 'fp-ts/lib/Option.js';
 import {eqBy, hold} from './utils.test.js';
 import * as FC from 'fast-check';
 
-const Headers$ = FC.array(FC.tuple(FC.stringMatching(/^\S+$/), FC.string())).map(
+const Headers$ = FC.array(FC.tuple(FC.stringMatching(/^[A-Za-z][A-Za-z0-9-_]+$/), FC.string())).map(
   tuples => new Headers(tuples),
   headers => headers instanceof Headers ? [...headers.entries()] : []
 );
