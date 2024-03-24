@@ -57,6 +57,7 @@ export const lookup = (name: HeaderName) => (headers: Headers) => pipe(
 // See https://github.com/fluture-js/fluture-node/security/advisories/GHSA-32x6-qvw6-mxj4
 export const omitConfidential = flow(
   unset('authorization'),
+  unset('proxy-authorization'),
   unset('cookie')
 );
 
