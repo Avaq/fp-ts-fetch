@@ -540,6 +540,19 @@ declare const header: (name: string, value: string) => (request: Request) => Req
 Sets one of the [request headers][] of a request to the given value. Uses
 [`Headers.set`](#headersset) so be aware of its gotchas.
 
+#### `Req.credentials`
+
+```ts
+declare const credentials: (credentials: RequestCredentials) => (request: Request) => Request
+```
+
+Set the [credentials mode][] of a request to the given value.
+
+> [!CAUTION]
+>
+> This function throws when the `credentials` parameter is not a valid
+> RequestCredentials value.
+
 #### `Req.append`
 
 ```ts
@@ -973,6 +986,7 @@ default handler for unexpected cases in, for example,
 [request method]: https://developer.mozilla.org/docs/Web/API/Request/method
 [request headers]: https://developer.mozilla.org/docs/Web/API/Request/headers
 [redirect mode]: https://developer.mozilla.org/docs/Web/API/Request/redirect
+[credentials mode]: https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
 
 [Response]: https://developer.mozilla.org/docs/Web/API/Response
 [`Response#text()`]: https://developer.mozilla.org/docs/Web/API/Response/text

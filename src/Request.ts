@@ -72,6 +72,10 @@ export const header = (name: string, value: string) => (request: Request) => (
   new Request(request, {headers: pipe(request.headers, H.set(name, value))})
 );
 
+export const credentials = (credentials: RequestCredentials) => (request: Request) => (
+  new Request(request, {credentials})
+);
+
 export const append = (name: string, value: string) => (request: Request) => (
   new Request(request, {headers: pipe(request.headers, H.append(name, value))})
 );
