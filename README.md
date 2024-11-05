@@ -548,11 +548,6 @@ declare const credentials: (credentials: RequestCredentials) => (request: Reques
 
 Set the [credentials mode][] of a request to the given value.
 
-> [!CAUTION]
->
-> This function throws when the `credentials` parameter is not a valid
-> RequestCredentials value.
-
 #### `Req.append`
 
 ```ts
