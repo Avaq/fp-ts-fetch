@@ -1,4 +1,4 @@
-import {pipe, constant, identity} from 'fp-ts/lib/function.js'
+import {pipe, constant, identity, flow} from 'fp-ts/lib/function.js'
 import * as TE from 'fp-ts/lib/TaskEither.js';
 import * as E from 'fp-ts/lib/Either.js';
 import * as R from 'fp-ts/lib/Record.js';
@@ -49,8 +49,9 @@ export const redirectAnyRequest: RedirectionStrategy = ([response, request]) => 
   O.fold(constant(request), ({origin, dest}) => pipe(
     request,
     Req.url(dest),
-    pipe(dest, U.sameSite(origin)) ? identity : Req.headers(
-      H.omitConfidential(request.headers)
+    pipe(dest, U.sameSite(origin)) ? identity : flow(
+      Req.headers(H.omitConfidential(request.headers)),
+      Req.credentials('omit'),
     )
   )),
 );
